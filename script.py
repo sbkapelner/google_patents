@@ -72,8 +72,23 @@ def get_status(result_link):
             return status
 
 
+def get_priority_date(no):
+    html = requests.get(
+        f"https://patents.google.com/patent/{no}/en?oq={no}", headers=headers()
+    ).text
+    soup = BeautifulSoup(html, "html.parser")
+    priority_date = soup.find(itemprop="priorityDate").text
+
+    return priority_date
+
+
+# file = updateDocument("dates.docx", result_link=required for new_row method but not for add_pd method)
+# file.create_document()
+# file.add_table()
+# file.new_row(0) OR
+# file.add_pd(0, "WO2005003896A2")
 class updateDocument:
-    def __init__(self, docxfilename, result_link):
+    def __init__(self, docxfilename, result_link="http://patents.google.com"):
         self.docxfilename = docxfilename
         self.result_link = result_link
 
@@ -88,7 +103,7 @@ class updateDocument:
         table.style = "Table Grid"
         document.save(self.docxfilename)
 
-    def add_row(self, table_no):
+    def new_row(self, table_no):
         document = Document(self.docxfilename)
         table = document.tables[table_no]
         table.add_row()
@@ -99,6 +114,23 @@ class updateDocument:
         p.add_run(
             f"{get_not_status(self.result_link)[1]}{get_status(self.result_link)}"
         )
+        document.save(self.docxfilename)
+
+    # Uses table.rows to calculate instead of table._cells. New_row uses table._cells but did not work for this method.
+    def add_pd(self, table_no, pub_no):
+        document = Document(self.docxfilename)
+        table = document.tables[table_no]
+        table.add_row()
+        if len(table.columns._gridCol_lst) < 2:
+            table.add_column(100)
+        cell1 = table.row_cells(len(table.rows) - 1)[0]
+        cell2 = table.row_cells(len(table.rows) - 1)[1]
+        p1 = cell1.add_paragraph()
+        p2 = cell2.add_paragraph()
+        p1.paragraph_format.space_after = Inches(0.3)
+        p2.paragraph_format.space_after = Inches(0.3)
+        p1.add_run(f"{pub_no}")
+        p2.add_run(f"{get_priority_date(pub_no)}")
         document.save(self.docxfilename)
 
 
