@@ -17,13 +17,13 @@ class requestFunctions:
 
         return my_headers
 
-    def get_html(self, result_link):
+    def get_html(self, result_link: str):
         html = requests.get(result_link, headers=self.get_headers()).text
         soup = BeautifulSoup(html, "html.parser")
 
         return soup
 
-    def get_other(self, result_link):
+    def get_other(self, result_link: str) -> str:
         soup = self.get_html(result_link)
         titleandid = soup.find_all("title")[0].text
         id = re.split(" - | \n", titleandid)[0]
@@ -49,7 +49,7 @@ class requestFunctions:
             f"{priority_date}\n",
         )
 
-    def get_status(self, result_link):
+    def get_status(self, result_link: str):
         soup = self.get_html(result_link)
         status_tag = soup.find_all("span", itemprop="status")
         exp_tag = soup.find_all("time", itemprop="expiration")
@@ -82,23 +82,13 @@ class requestFunctions:
             case "Withdrawn":
                 return status
 
-    def get_priority_date(self, no):
-        html = requests.get(
-            f"https://patents.google.com/patent/{no}/en?oq={no}",
-            headers=self.get_headers(),
-        ).text
-        soup = BeautifulSoup(html, "html.parser")
-        priority_date = soup.find(itemprop="priorityDate").text
-
-        return priority_date
-
-    def url_from_patno(self, no):
+    def url_from_patno(self, no: str) -> str:
         url = f"https://patents.google.com/patent/{no}/en?oq={no}"
 
         return url
 
 
-# file = updateDocument("dates.docx", result_link=required for new_row method but not for add_pd method)
+# file = updateDocument("dates.docx", result_link=)
 # file.create_document()
 # file.add_table()
 # file.new_row(0) OR
@@ -106,29 +96,29 @@ class requestFunctions:
 class updateDocument(requestFunctions):
     def __init__(
         self,
-        docxfilename,
-        pat_no,
-        no=True,
-        title=True,
-        inventor=True,
-        assignee=True,
-        status=True,
-        pd=False,
+        docxfilename: str,
+        pat_no: str,
+        NO: bool = True,
+        TITLE: bool = True,
+        INVENTOR: bool = True,
+        ASSIGNEE: bool = True,
+        STATUS: bool = True,
+        PD: bool = False,
     ):
         self.docxfilename = docxfilename
         self.result_link = self.url_from_patno(pat_no)
-        self.no = no
-        self.title = title
-        self.inventor = inventor
-        self.assignee = assignee
-        self.status = status
-        self.pd = pd
-        self.ID = self.get_other(self.result_link)[0]
-        self.TITLE = self.get_other(self.result_link)[1]
-        self.INVENTOR = self.get_other(self.result_link)[2]
-        self.ASSIGNEE = self.get_other(self.result_link)[3]
-        self.PRIORITYDATE = self.get_other(self.result_link)[4]
-        self.STATUS = self.get_status(self.result_link)
+        self.NO = NO
+        self.TITLE = TITLE
+        self.INVENTOR = INVENTOR
+        self.ASSIGNEE = ASSIGNEE
+        self.STATUS = STATUS
+        self.PD = PD
+        self.id = self.get_other(self.result_link)[0]
+        self.title = self.get_other(self.result_link)[1]
+        self.inventor = self.get_other(self.result_link)[2]
+        self.assignee = self.get_other(self.result_link)[3]
+        self.prioritydate = self.get_other(self.result_link)[4]
+        self.status = self.get_status(self.result_link)
 
     def create_document(self):
         document = Document()
@@ -141,7 +131,7 @@ class updateDocument(requestFunctions):
         table.style = "Table Grid"
         document.save(self.docxfilename)
 
-    def new_row(self, table_no):
+    def new_row(self, table_no: int):
         document = Document(self.docxfilename)
         table = document.tables[table_no]
         table.add_row()
@@ -149,43 +139,25 @@ class updateDocument(requestFunctions):
         p = cell.add_paragraph()
         p.paragraph_format.space_after = Inches(0.3)
 
-        if self.no == True:
+        if self.NO == True:
             add_hyperlink(p, self.get_other(self.result_link)[0], self.result_link)
         # p.add_run(
         # f"{self.get_other(self.result_link)[1]}{self.#get_status(self.result_link)}"
         # )
 
-        if self.title == True:
-            p.add_run(self.TITLE)
+        if self.TITLE == True:
+            p.add_run(self.title)
 
-        if self.inventor == True:
-            p.add_run(self.INVENTOR)
+        if self.INVENTOR == True:
+            p.add_run(self.inventor)
 
-        if self.assignee == True:
-            p.add_run(self.ASSIGNEE)
+        if self.ASSIGNEE == True:
+            p.add_run(self.assignee)
 
-        if self.status == True:
-            p.add_run(f"{self.STATUS}\n")
+        if self.STATUS == True:
+            p.add_run(f"{self.status}\n")
 
-        if self.pd == True:
-            p.add_run(self.PRIORITYDATE)
+        if self.PD == True:
+            p.add_run(self.prioritydate)
 
-        document.save(self.docxfilename)
-
-    # Uses table.rows to calculate instead of table._cells. New_row uses table._cells but did not work for this method.
-    # Need to drag column width to see priority dates
-    def add_pd(self, table_no, pub_no):
-        document = Document(self.docxfilename)
-        table = document.tables[table_no]
-        table.add_row()
-        if len(table.columns._gridCol_lst) < 2:
-            table.add_column(100)
-        cell1 = table.row_cells(len(table.rows) - 1)[0]
-        cell2 = table.row_cells(len(table.rows) - 1)[1]
-        p1 = cell1.add_paragraph()
-        p2 = cell2.add_paragraph()
-        p1.paragraph_format.space_after = Inches(0.3)
-        p2.paragraph_format.space_after = Inches(0.3)
-        p1.add_run(f"{pub_no}")
-        p2.add_run(f"{self.get_priority_date(pub_no)}")
         document.save(self.docxfilename)
