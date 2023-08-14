@@ -7,18 +7,14 @@ from hyperlink import add_hyperlink
 
 
 class requestFunctions:
-    def get_headers(self):
+    def get_html(self, result_link: str):
         my_headers = {
             "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
             "Accept-Encoding": "gzip, deflate",
             "Accept": "*/*",
             "Connection": "keep-alive",
         }
-
-        return my_headers
-
-    def get_html(self, result_link: str):
-        html = requests.get(result_link, headers=self.get_headers()).text
+        html = requests.get(result_link, headers=my_headers).text
         soup = BeautifulSoup(html, "html.parser")
 
         return soup

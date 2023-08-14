@@ -41,8 +41,8 @@ function Form() {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <h1>Prior Art Report Template</h1>
+    <div className="Form" style={{ textAlign: "center" }}>
+      <h1 className="title">Prior Art Report Template</h1>
       <form>
         <input
           type={"file"}
@@ -77,7 +77,7 @@ function Form() {
         </button>
       </form>
       <br></br>
-      <pre>{csvdata}</pre>
+      <pre className="data">{csvdata}</pre>
     </div>
   );
 }

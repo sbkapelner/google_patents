@@ -6,7 +6,20 @@
 
 .btn-gradient-1 {
   background: linear-gradient(white, white) padding-box,
-    linear-gradient(to right, darkblue, darkorchid) border-box;
+    linear-gradient(to right, gray, rgba(255, 255, 255, 0.752)) border-box;
   border-radius: 50em;
   border: 4px solid transparent;
+}
+
+.Form {
+  background-color: #6b7ea9;
+}
+
+.data {
+  color: black;
+  background-color: white;
+}
+
+.title {
+  color: white;
 }
