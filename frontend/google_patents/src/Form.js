@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
+import "./Form.css";
 
 function Form() {
+  const [file, setFile] = useState();
+
   const fileReader = new FileReader();
 
   const Storage = () => {
@@ -12,8 +15,6 @@ function Form() {
     }
     return storedCsvData;
   };
-
-  const [file, setFile] = useState();
 
   const [csvdata, setCsvData] = useState(Storage());
 
@@ -48,21 +49,31 @@ function Form() {
           id={"csvFileInput"}
           accept={".csv"}
           onChange={handleOnChange}
+          className="btn-gradient-1"
         />
 
         <button
+          className="btn-gradient-1"
           onClick={(e) => {
             handleOnSubmit(e);
           }}
         >
-          IMPORT CSV
+          Upload CSV
         </button>
         <button
+          className="btn-gradient-1"
           onClick={(e) => {
             localStorage.clear();
           }}
         >
           Reset
+        </button>
+      </form>
+      <br></br>
+      <form action="http://localhost:8080/submit" method="post">
+        <input type="hidden" name="generate" value={csvdata}></input>
+        <button type="submit" className="btn-gradient-1">
+          Generate Report
         </button>
       </form>
       <br></br>
