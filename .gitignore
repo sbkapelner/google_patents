@@ -1,3 +1,6 @@
 *.docx
 __pycache__
 /dep/
+/node_modules
+/.pnp
+.pnp.js

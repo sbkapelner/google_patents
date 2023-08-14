@@ -38,7 +38,6 @@ class requestFunctions:
         else:
             assignee = "Assignee: None"
 
-        # return f"{id}\n", f"{title.strip()}\n{inventor}\n{assignee}\n"
         priority_date = soup.find(itemprop="priorityDate").text
 
         return (
@@ -70,17 +69,17 @@ class requestFunctions:
 
         match status:
             case "Expired":
-                return status
+                return f"{status}\n"
             case "Active":
-                return f"{status} (Exp. {exp})"
+                return f"{status} (Exp. {exp})\n"
             case 0:
                 return "No status or exp date"
             case "Abandoned":
-                return status
+                return f"{status}\n"
             case "Pending":
-                return status
+                return f"{status}\n"
             case "Withdrawn":
-                return status
+                return f"{status}\n"
 
     def url_from_patno(self, no: str) -> str:
         url = f"https://patents.google.com/patent/{no}/en?oq={no}"
@@ -91,8 +90,7 @@ class requestFunctions:
 # file = updateDocument("dates.docx", result_link=)
 # file.create_document()
 # file.add_table()
-# file.new_row(0) OR
-# file.add_pd(0, "WO2005003896A2")
+# file.new_row(0)
 class updateDocument(requestFunctions):
     def __init__(
         self,
@@ -111,8 +109,8 @@ class updateDocument(requestFunctions):
         self.TITLE = TITLE
         self.INVENTOR = INVENTOR
         self.ASSIGNEE = ASSIGNEE
-        self.STATUS = STATUS
         self.PD = PD
+        self.STATUS = STATUS
         self.id = self.get_other(self.result_link)[0]
         self.title = self.get_other(self.result_link)[1]
         self.inventor = self.get_other(self.result_link)[2]
@@ -141,9 +139,6 @@ class updateDocument(requestFunctions):
 
         if self.NO == True:
             add_hyperlink(p, self.get_other(self.result_link)[0], self.result_link)
-        # p.add_run(
-        # f"{self.get_other(self.result_link)[1]}{self.#get_status(self.result_link)}"
-        # )
 
         if self.TITLE == True:
             p.add_run(self.title)
@@ -155,7 +150,7 @@ class updateDocument(requestFunctions):
             p.add_run(self.assignee)
 
         if self.STATUS == True:
-            p.add_run(f"{self.status}\n")
+            p.add_run(self.status)
 
         if self.PD == True:
             p.add_run(self.prioritydate)
