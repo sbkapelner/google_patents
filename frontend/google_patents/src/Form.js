@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Form.css";
+import RadioButtons from "./RadioButtons";
 
 function Form() {
   const [file, setFile] = useState();
@@ -43,6 +44,14 @@ function Form() {
   return (
     <div className="Form" style={{ textAlign: "center" }}>
       <h1 className="title">Prior Art Report Template</h1>
+      <p>
+        <a
+          className="link"
+          href="https://storage.cloud.google.com/misc_37510/sample.docx"
+        >
+          | sample report |
+        </a>
+      </p>
       <form>
         <input
           type={"file"}
@@ -69,15 +78,17 @@ function Form() {
           Reset
         </button>
       </form>
-      <br></br>
       <form action="http://localhost:8080/submit" method="post">
+        <RadioButtons></RadioButtons>
+        <br></br>
         <input type="hidden" name="generate" value={csvdata}></input>
         <button type="submit" className="btn-gradient-1">
           Generate Report
         </button>
       </form>
       <br></br>
-      <pre className="data">{csvdata}</pre>
+      <textarea cols="30" rows="10" value={csvdata} className="data"></textarea>
+      <br></br>
     </div>
   );
 }

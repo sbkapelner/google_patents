@@ -92,21 +92,24 @@ class updateDocument(requestFunctions):
         self,
         docxfilename: str,
         pat_no: str,
-        NO: bool = True,
-        TITLE: bool = True,
-        INVENTOR: bool = True,
-        ASSIGNEE: bool = True,
-        STATUS: bool = True,
-        PD: bool = False,
+        parameters={
+            "patent_no": "on",
+            "title": "on",
+            "inventor": "on",
+            "assignee": "on",
+            "status": "on",
+            "priority_date": "off",
+        },
     ):
         self.docxfilename = docxfilename
         self.result_link = self.url_from_patno(pat_no)
-        self.NO = NO
+        """self.NO = NO
         self.TITLE = TITLE
         self.INVENTOR = INVENTOR
         self.ASSIGNEE = ASSIGNEE
         self.PD = PD
-        self.STATUS = STATUS
+        self.STATUS = STATUS"""
+        self.parameters = parameters
         self.id = self.get_other(self.result_link)[0]
         self.title = self.get_other(self.result_link)[1]
         self.inventor = self.get_other(self.result_link)[2]
@@ -133,22 +136,22 @@ class updateDocument(requestFunctions):
         p = cell.add_paragraph()
         p.paragraph_format.space_after = Inches(0.3)
 
-        if self.NO == True:
+        if self.parameters["patent_no"] == "on":
             add_hyperlink(p, self.get_other(self.result_link)[0], self.result_link)
 
-        if self.TITLE == True:
+        if self.parameters["title"] == "on":
             p.add_run(self.title)
 
-        if self.INVENTOR == True:
+        if self.parameters["inventor"] == "on":
             p.add_run(self.inventor)
 
-        if self.ASSIGNEE == True:
+        if self.parameters["assignee"] == "on":
             p.add_run(self.assignee)
 
-        if self.STATUS == True:
+        if self.parameters["status"] == "on":
             p.add_run(self.status)
 
-        if self.PD == True:
+        if self.parameters["priority_date"] == "on":
             p.add_run(self.prioritydate)
 
         document.save(self.docxfilename)

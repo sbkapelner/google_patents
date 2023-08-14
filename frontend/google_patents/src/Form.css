@@ -5,14 +5,15 @@
 }
 
 .btn-gradient-1 {
+  color: #6b7ea9;
   background: linear-gradient(white, white) padding-box,
-    linear-gradient(to right, gray, rgba(255, 255, 255, 0.752)) border-box;
+    linear-gradient(to right, gray, gray) border-box;
   border-radius: 50em;
   border: 4px solid transparent;
 }
-
 .Form {
-  background-color: #6b7ea9;
+  border-radius: 10px 10px 10px 10px;
+  background-color: black;
 }
 
 .data {
@@ -22,4 +23,8 @@
 
 .title {
   color: white;
+}
+
+.link {
+  color: #6b7ea9;
 }
