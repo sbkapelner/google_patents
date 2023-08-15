@@ -28,3 +28,7 @@
 .link {
   color: #6b7ea9;
 }
+
+.errormsg {
+  color: red;
+}

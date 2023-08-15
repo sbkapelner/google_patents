@@ -103,12 +103,6 @@ class updateDocument(requestFunctions):
     ):
         self.docxfilename = docxfilename
         self.result_link = self.url_from_patno(pat_no)
-        """self.NO = NO
-        self.TITLE = TITLE
-        self.INVENTOR = INVENTOR
-        self.ASSIGNEE = ASSIGNEE
-        self.PD = PD
-        self.STATUS = STATUS"""
         self.parameters = parameters
         self.id = self.get_other(self.result_link)[0]
         self.title = self.get_other(self.result_link)[1]

@@ -1,4 +1,4 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, redirect
 from script import updateDocument
 from datetime import datetime
 import os.path
@@ -8,6 +8,9 @@ app = Flask(__name__)
 
 @app.route("/submit", methods=["POST"])
 def submit():
+    err_nodata = request.form["err_nodata"]
+    err_datashape = request.form["err_datashape"]
+
     client_parameters = {
         "patent_no": request.form["patent_no"],
         "title": request.form["title"],
@@ -17,9 +20,10 @@ def submit():
         "priority_date": request.form["priority_date"],
     }
 
+    if err_nodata == "true" or err_datashape == "true":
+        return redirect("http://localhost:3000/")
+
     data = request.form["generate"].split("\r\n")
-    if data == [""]:
-        return "no data"
     fname = f"{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.docx"
     for pat_no in data:
         file = updateDocument(fname, pat_no, client_parameters)

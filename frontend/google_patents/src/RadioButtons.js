@@ -4,24 +4,29 @@ import "./RadioButtons.css";
 function RadioButtons() {
   return (
     <div className="radio">
-      <label>Patent No:</label>
       <input type="checkbox" name="patent_no" value="on"></input>
       <input type="hidden" name="patent_no" value="off" />
-      <label>Title:</label>
+      <label>Patent No </label>
+
       <input type="checkbox" name="title" value="on"></input>
       <input type="hidden" name="title" value="off" />
-      <label>Inventor:</label>
+      <label>Title </label>
+
       <input type="checkbox" name="inventor" value="on"></input>
       <input type="hidden" name="inventor" value="off" />
-      <label>Assignee:</label>
+      <label>Inventor </label>
+
       <input type="checkbox" name="assignee" value="on"></input>
       <input type="hidden" name="assignee" value="off" />
-      <label>Status:</label>
+      <label>Assignee </label>
+
       <input type="checkbox" name="status" value="on"></input>
       <input type="hidden" name="status" value="off" />
-      <label>Priority Date:</label>
+      <label>Status </label>
+
       <input type="checkbox" name="priority_date" value="on"></input>
       <input type="hidden" name="priority_date" value="off" />
+      <label>Priority Date </label>
     </div>
   );
 }

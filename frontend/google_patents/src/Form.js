@@ -7,17 +7,9 @@ function Form() {
 
   const fileReader = new FileReader();
 
-  const Storage = () => {
-    let storedCsvData = "";
-    if (localStorage.getItem("csvdata") === null) {
-      storedCsvData = "";
-    } else {
-      storedCsvData = localStorage.getItem("csvdata");
-    }
-    return storedCsvData;
-  };
+  const [csvdata, setCsvData] = useState("");
 
-  const [csvdata, setCsvData] = useState(Storage());
+  const [errors, setErrors] = useState({ nodata: false, datashape: false });
 
   useEffect(() => {
     localStorage.setItem("csvdata", csvdata);
@@ -39,6 +31,24 @@ function Form() {
 
       fileReader.readAsText(file);
     }
+  };
+
+  const validate = () => {
+    const errormsgs = {};
+
+    errormsgs.nodata = csvdata === "" ? true : false;
+
+    if (errormsgs.nodata === true) {
+      alert("No data");
+    }
+
+    errormsgs.datashape = csvdata.includes(",") ? true : false;
+
+    if (errormsgs.datashape === true) {
+      alert("Data must be a single column");
+    }
+
+    setErrors(errormsgs);
   };
 
   return (
@@ -78,10 +88,16 @@ function Form() {
           Reset
         </button>
       </form>
-      <form action="http://localhost:8080/submit" method="post">
+      <form
+        action="http://localhost:8080/submit"
+        method="post"
+        onSubmit={validate}
+      >
         <RadioButtons></RadioButtons>
         <br></br>
         <input type="hidden" name="generate" value={csvdata}></input>
+        <input type="hidden" name="err_nodata" value={errors.nodata} />
+        <input type="hidden" name="err_datashape" value={errors.datashape} />
         <button type="submit" className="btn-gradient-1">
           Generate Report
         </button>
