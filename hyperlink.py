@@ -2,7 +2,7 @@ from docx import Document, opc, oxml
 from docx.enum.dml import MSO_THEME_COLOR_INDEX
 
 
-def add_hyperlink(paragraph, text, url):
+def add_hyperlink(paragraph, text: str, url: str) -> object:
     # This gets access to the document.xml.rels file and gets a new relation id value
     part = paragraph.part
     r_id = part.relate_to(

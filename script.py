@@ -104,12 +104,14 @@ class updateDocument(requestFunctions):
         self.docxfilename = docxfilename
         self.result_link = self.url_from_patno(pat_no)
         self.parameters = parameters
-        self.id = self.get_other(self.result_link)[0]
-        self.title = self.get_other(self.result_link)[1]
-        self.inventor = self.get_other(self.result_link)[2]
-        self.assignee = self.get_other(self.result_link)[3]
-        self.prioritydate = self.get_other(self.result_link)[4]
-        self.status = self.get_status(self.result_link)
+        self.google_data = {
+            "id": self.get_other(self.result_link)[0],
+            "title": self.get_other(self.result_link)[1],
+            "inventor": self.get_other(self.result_link)[2],
+            "assignee": self.get_other(self.result_link)[3],
+            "status": self.get_status(self.result_link),
+            "prioritydate": self.get_other(self.result_link)[4],
+        }
 
     def create_document(self):
         document = Document()
@@ -130,22 +132,10 @@ class updateDocument(requestFunctions):
         p = cell.add_paragraph()
         p.paragraph_format.space_after = Inches(0.3)
 
-        if self.parameters["patent_no"] == "on":
-            add_hyperlink(p, self.get_other(self.result_link)[0], self.result_link)
-
-        if self.parameters["title"] == "on":
-            p.add_run(self.title)
-
-        if self.parameters["inventor"] == "on":
-            p.add_run(self.inventor)
-
-        if self.parameters["assignee"] == "on":
-            p.add_run(self.assignee)
-
-        if self.parameters["status"] == "on":
-            p.add_run(self.status)
-
-        if self.parameters["priority_date"] == "on":
-            p.add_run(self.prioritydate)
+        for key_pair in list(zip(self.parameters, self.google_data)):
+            if self.parameters[key_pair[0]] == "on" and key_pair[0] == "patent_no":
+                add_hyperlink(p, self.get_other(self.result_link)[0], self.result_link)
+            if self.parameters[key_pair[0]] == "on" and key_pair[0] != "patent_no":
+                p.add_run(self.google_data[key_pair[1]])
 
         document.save(self.docxfilename)
