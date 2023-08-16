@@ -101,7 +101,8 @@ class updateDocument(requestFunctions):
         },
     ):
         self.docxfilename = docxfilename
-        self.result_link = self.url_from_patno(pat_no)
+        self.pat_no = pat_no
+        self.result_link = self.url_from_patno(self.pat_no)
         self.parameters = parameters
         self.status_code = requests.get(self.result_link).status_code
         self.response = self.get_html(self.result_link)
@@ -143,6 +144,6 @@ class updateDocument(requestFunctions):
                 if self.parameters[key_pair[0]] == "on" and key_pair[0] != "patent_no":
                     p.add_run(self.get_google_data()[key_pair[1]])
         else:
-            p.add_run(f"Could not find {self.get_google_data()['id']}")
+            p.add_run(f"Could not find {self.pat_no}")
 
         document.save(self.docxfilename)
