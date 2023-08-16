@@ -7,7 +7,17 @@ function Form() {
 
   const fileReader = new FileReader();
 
-  const [csvdata, setCsvData] = useState("");
+  const Storage = () => {
+    let storedCsvData = "";
+    if (localStorage.getItem("csvdata") === null) {
+      storedCsvData = "";
+    } else {
+      storedCsvData = localStorage.getItem("csvdata");
+    }
+    return storedCsvData;
+  };
+
+  const [csvdata, setCsvData] = useState(Storage());
 
   const [errors, setErrors] = useState({ nodata: false, datashape: false });
 

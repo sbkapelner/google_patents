@@ -14,13 +14,12 @@ class requestFunctions:
             "Accept": "*/*",
             "Connection": "keep-alive",
         }
-        html = requests.get(result_link, headers=my_headers).text
-        soup = BeautifulSoup(html, "html.parser")
+        response = requests.get(result_link, headers=my_headers)
 
-        return soup
+        return response
 
-    def get_other(self, result_link: str) -> str:
-        soup = self.get_html(result_link)
+    def get_other(self, response: object) -> str:
+        soup = BeautifulSoup(response.text, "html.parser")
         titleandid = soup.find_all("title")[0].text
         id = re.split(" - | \n", titleandid)[0]
         title = re.split(" - | \n", titleandid)[1]
@@ -44,8 +43,8 @@ class requestFunctions:
             f"{priority_date}\n",
         )
 
-    def get_status(self, result_link: str):
-        soup = self.get_html(result_link)
+    def get_status(self, response: object):
+        soup = BeautifulSoup(response.text, "html.parser")
         status_tag = soup.find_all("span", itemprop="status")
         exp_tag = soup.find_all("time", itemprop="expiration")
 
@@ -104,14 +103,19 @@ class updateDocument(requestFunctions):
         self.docxfilename = docxfilename
         self.result_link = self.url_from_patno(pat_no)
         self.parameters = parameters
-        self.google_data = {
-            "id": self.get_other(self.result_link)[0],
-            "title": self.get_other(self.result_link)[1],
-            "inventor": self.get_other(self.result_link)[2],
-            "assignee": self.get_other(self.result_link)[3],
-            "status": self.get_status(self.result_link),
-            "prioritydate": self.get_other(self.result_link)[4],
+        self.status_code = requests.get(self.result_link).status_code
+        self.response = self.get_html(self.result_link)
+
+    def get_google_data(self):
+        google_data = {
+            "id": self.get_other(self.response)[0],
+            "title": self.get_other(self.response)[1],
+            "inventor": self.get_other(self.response)[2],
+            "assignee": self.get_other(self.response)[3],
+            "status": self.get_status(self.response),
+            "prioritydate": self.get_other(self.response)[4],
         }
+        return google_data
 
     def create_document(self):
         document = Document()
@@ -132,10 +136,13 @@ class updateDocument(requestFunctions):
         p = cell.add_paragraph()
         p.paragraph_format.space_after = Inches(0.3)
 
-        for key_pair in list(zip(self.parameters, self.google_data)):
-            if self.parameters[key_pair[0]] == "on" and key_pair[0] == "patent_no":
-                add_hyperlink(p, self.get_other(self.result_link)[0], self.result_link)
-            if self.parameters[key_pair[0]] == "on" and key_pair[0] != "patent_no":
-                p.add_run(self.google_data[key_pair[1]])
+        if self.status_code == 200:
+            for key_pair in list(zip(self.parameters, self.get_google_data())):
+                if self.parameters[key_pair[0]] == "on" and key_pair[0] == "patent_no":
+                    add_hyperlink(p, self.get_google_data()["id"], self.result_link)
+                if self.parameters[key_pair[0]] == "on" and key_pair[0] != "patent_no":
+                    p.add_run(self.get_google_data()[key_pair[1]])
+        else:
+            p.add_run(f"Could not find {self.get_google_data()['id']}")
 
         document.save(self.docxfilename)

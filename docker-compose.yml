@@ -1,0 +1,9 @@
+services:
+  backend:
+    build: backend/.
+    ports:
+      - "8080:80"
+  frontend:
+    build: frontend/google_patents/.
+    ports:
+      - "3000:80"

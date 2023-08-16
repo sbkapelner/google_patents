@@ -31,7 +31,7 @@ def submit():
             file.create_document()
             file.add_table()
         file.new_row(0)
-    return send_file(fname, as_attachment=True)
+    return send_file(os.path.join(os.getcwd(), fname), as_attachment=True)
 
 
 if __name__ == "__main__":
