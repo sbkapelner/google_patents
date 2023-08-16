@@ -21,7 +21,7 @@ def submit():
     }
 
     if err_nodata == "true" or err_datashape == "true":
-        return redirect("http://localhost:3000/")
+        return redirect(f"http://localhost:3000/")
 
     data = request.form["generate"].split("\r\n")
     fname = f"{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.docx"
