@@ -99,7 +99,8 @@ function Form() {
         </button>
       </form>
       <form
-        action="http://35.208.101.199:8080/submit"
+        //action="http://35.208.101.199:8080/submit"
+        action="http://localhost:8080/submit"
         method="post"
         onSubmit={validate}
       >
@@ -115,6 +116,10 @@ function Form() {
       <br></br>
       <textarea cols="30" rows="10" value={csvdata} className="data"></textarea>
       <br></br>
+      <div className="copyright">
+        <p className="title">Copyright &copy; Sarah Kapelner </p>
+        <p>All Rights Reserved.</p>
+      </div>
     </div>
   );
 }
