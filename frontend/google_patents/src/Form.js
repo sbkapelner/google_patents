@@ -115,6 +115,10 @@ function Form() {
       <br></br>
       <textarea cols="30" rows="10" value={csvdata} className="data"></textarea>
       <br></br>
+      <div className="copyright">
+        <p className="title">Copyright &copy; Sarah Kapelner </p>
+        <p>All Rights Reserved.</p>
+      </div>
     </div>
   );
 }
