@@ -16,6 +16,10 @@ jobs:
         run: docker build . --file Dockerfile --tag northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend
         working-directory: ./backend
 
+      -name: Permission
+       run:
+        docker-credential-gcr configure-docker northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1
+
       - name: Build frontend image
         run: docker build . --file ./Dockerfile --tag northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend
         working-directory: ./frontend/google_patents
