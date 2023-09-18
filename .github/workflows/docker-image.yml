@@ -1,18 +1,25 @@
-name: Docker Image CI
+name: google_patents-workflow
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build the Docker image
-      run: docker build . --file backend/Dockerfile --tag backend:northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend \ docker build . --file frontend/google_patents/Dockerfile --tag frontend:northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend \ docker push northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend \ docker push northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend
+      - uses: actions/checkout@v3
+      - name: Build backend image
+        run: docker build . --file backend/Dockerfile --tag backend:northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend
+
+      - name: Build frontend image
+        run: docker build . --file frontend/google_patents/Dockerfile --tag frontend:northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend
+
+      - name: Push backend image
+        run: docker push northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend
+
+      - name: Push frontend image
+        run: docker push northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend
