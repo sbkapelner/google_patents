@@ -14,9 +14,11 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build backend image
         run: docker build . --file backend/Dockerfile --tag northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend
+        working-directory: ./backend
 
       - name: Build frontend image
         run: docker build . --file frontend/google_patents/Dockerfile --tag northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend
+        working-directory: ./frontend
 
       - name: Push backend image
         run: docker push northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend
