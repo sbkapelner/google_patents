@@ -17,8 +17,8 @@ jobs:
         working-directory: ./backend
 
       - name: Build frontend image
-        run: docker build . --file ./google_patents/Dockerfile --tag northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend
-        working-directory: ./frontend
+        run: docker build . --file ./Dockerfile --tag northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/frontend
+        working-directory: ./frontend/google_patents
 
       - name: Push backend image
         run: docker push northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/backend
