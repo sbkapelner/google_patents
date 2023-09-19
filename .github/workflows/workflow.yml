@@ -32,8 +32,7 @@ jobs:
       - name: "Docker auth"
         run: |-
           gcloud auth configure-docker --quiet
-          gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev --quiet
-          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin northamerica-northeast1-docker.pkg.dev --quiet
+          gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin northamerica-northeast1-docker.pkg.dev
 
       - name: Build backend image
         run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}backend
