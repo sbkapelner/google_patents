@@ -12,8 +12,7 @@ env:
   GAR_LOCATION: northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/
 
 jobs:
-  deploy:
-    # Add 'id-token' with the intended permissions for workload identity federation
+  build-push-artifact-registry:
     permissions:
       contents: "read"
       id-token: "write"
@@ -23,21 +22,16 @@ jobs:
       - name: "Checkout"
         uses: "actions/checkout@v3"
 
-      - name: "Google auth"
-        id: "auth"
-        uses: "google-github-actions/auth@v1"
-        with:
-          workload_identity_provider: "${{ secrets.WIF_PROVIDER }}"
-          service_account: "${{ secrets.WIF_SERVICE_ACCOUNT }}"
-
-      - name: "Set up Cloud SDK"
-        uses: "google-github-actions/setup-gcloud@v1"
-        with:
-          project_id: "${{ env.PROJECT_ID }}"
+      - name: gcloud Setup
+        uses: google-github-actions/setup-gcloud@master
+          with:
+            service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+            project_id: ${{ env.PROJECT_ID }}
+            export_default_credentials: true
 
       - name: "Docker auth"
         run: |-
-          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
       - name: Build backend image
         run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}backend
