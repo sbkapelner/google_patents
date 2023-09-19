@@ -31,7 +31,8 @@ jobs:
 
       - name: "Docker auth"
         run: |-
-          gcloud auth configure-docker ${{ env.GAR_LOCATION }} --quiet
+          gcloud auth configure-docker --quiet
+          gcloud auth configure-docker northamerica-northeast1-docker.pkg.dev --quiet
 
       - name: Build backend image
         run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}backend
