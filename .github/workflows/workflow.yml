@@ -1,0 +1,54 @@
+name: Build app and create a release in Cloud Deploy
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  PROJECT_ID: language-app-323017
+  REGION: northamerica-northeast1
+  GAR_LOCATION: northamerica-northeast1-docker.pkg.dev/language-app-323017/repo-1/
+
+jobs:
+  deploy:
+    # Add 'id-token' with the intended permissions for workload identity federation
+    permissions:
+      contents: "read"
+      id-token: "write"
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: "actions/checkout@v3"
+
+      - name: "Google auth"
+        id: "auth"
+        uses: "google-github-actions/auth@v1"
+        with:
+          workload_identity_provider: "${{ secrets.WIF_PROVIDER }}"
+          service_account: "${{ secrets.WIF_SERVICE_ACCOUNT }}"
+
+      - name: "Set up Cloud SDK"
+        uses: "google-github-actions/setup-gcloud@v1"
+        with:
+          project_id: "${{ env.PROJECT_ID }}"
+
+      - name: "Docker auth"
+        run: |-
+          gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev
+
+      - name: Build backend image
+        run: docker build . --file Dockerfile --tag ${{ env.GAR_LOCATION }}backend
+        working-directory: ./backend
+
+      - name: Build frontend image
+        run: docker build . --file ./Dockerfile --tag ${{ env.GAR_LOCATION }}frontend
+        working-directory: ./frontend/google_patents
+
+      - name: Push backend image
+        run: docker push ${{ env.GAR_LOCATION }}backend
+
+      - name: Push frontend image
+        run: docker push ${{ env.GAR_LOCATION }}frontend
