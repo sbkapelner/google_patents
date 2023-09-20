@@ -14,6 +14,7 @@
 .Form {
   border-radius: 10px 10px 10px 10px;
   background-color: black;
+  height: 100vh
 }
 
 .data {
