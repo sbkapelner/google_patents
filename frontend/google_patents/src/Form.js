@@ -99,7 +99,6 @@ function Form() {
         </button>
       </form>
       <form
-        //action="http://35.208.101.199:8080/submit"
         action="http://localhost:8080/submit"
         method="post"
         onSubmit={validate}
