@@ -46,16 +46,3 @@ jobs:
 
       - name: Push frontend image
         run: docker push ${{ env.GAR_LOCATION }}frontend
-
-      - id: "compute-ssh"
-        uses: "google-github-actions/ssh-compute@v0"
-        with:
-          instance_name: "instance-1"
-          zone: "us-central1-c"
-          ssh_private_key: "${{ secrets.GCP_SSH_PRIVATE_KEY }}"
-          command: "echo Hello world"
-
-      - id: "test"
-        run: |-
-          echo '${{ steps.compute-ssh.outputs.stdout }}'
-          echo '${{ steps.compute-ssh.outputs.stderr }}'
