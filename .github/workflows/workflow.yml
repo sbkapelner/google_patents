@@ -51,6 +51,6 @@ jobs:
         uses: appleboy/ssh-action@v1.0.0
         with:
           host: "35.208.101.199"
-          username: ${{ secrets.USERNAME }}
+          username: sbkapelner
           key: ${{ secrets.OPENSSH_KEY }}
           script: whoami
