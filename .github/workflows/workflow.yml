@@ -46,3 +46,11 @@ jobs:
 
       - name: Push frontend image
         run: docker push ${{ env.GAR_LOCATION }}frontend
+
+      - name: executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: "35.208.101.199"
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+          script: whoami
