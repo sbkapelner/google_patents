@@ -52,5 +52,5 @@ jobs:
         with:
           host: "35.208.101.199"
           username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+          key: ${{ secrets.GCP_SSH_PRIVATE_KEY }}
           script: whoami
