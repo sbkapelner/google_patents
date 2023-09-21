@@ -53,4 +53,4 @@ jobs:
           host: "35.208.101.199"
           username: sbkapelner
           key: ${{ secrets.OPENSSH_KEY }}
-          script: whoami
+          script: ./script.sh
