@@ -109,12 +109,12 @@ class updateDocument(requestFunctions):
 
     def get_google_data(self):
         google_data = {
-            "id": self.get_other(self.response)[0],
+            "patent_no": self.get_other(self.response)[0],
             "title": self.get_other(self.response)[1],
             "inventor": self.get_other(self.response)[2],
             "assignee": self.get_other(self.response)[3],
             "status": self.get_status(self.response),
-            "prioritydate": self.get_other(self.response)[4],
+            "priority_date": self.get_other(self.response)[4],
         }
         return google_data
 
@@ -136,13 +136,17 @@ class updateDocument(requestFunctions):
         cell = table._cells[len(table._cells) - 1]
         p = cell.add_paragraph()
         p.paragraph_format.space_after = Inches(0.3)
+        filtered_keys = [k for (k, v) in self.parameters.items() if v != "off"]
 
         if self.status_code == 200:
-            for key_pair in list(zip(self.parameters, self.get_google_data())):
-                if self.parameters[key_pair[0]] == "on" and key_pair[0] == "patent_no":
-                    add_hyperlink(p, self.get_google_data()["id"], self.result_link)
-                if self.parameters[key_pair[0]] == "on" and key_pair[0] != "patent_no":
-                    p.add_run(self.get_google_data()[key_pair[1]])
+            for key in filtered_keys:
+                if key == "patent_no":
+                    add_hyperlink(
+                        p, self.get_google_data()["patent_no"], self.result_link
+                    )
+                else:
+                    p.add_run(self.get_google_data()[key])
+
         else:
             p.add_run(f"Could not find {self.pat_no}")
 
