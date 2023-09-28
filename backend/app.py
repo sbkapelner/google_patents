@@ -25,12 +25,12 @@ def submit():
 
     data = request.form["generate"].split("\r\n")
     fname = f"{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.docx"
+    file = updateDocument(fname, client_parameters)
+    file.create_document()
+    file.add_table()
+
     for pat_no in data:
-        file = updateDocument(fname, pat_no, client_parameters)
-        if os.path.isfile(fname) == False:
-            file.create_document()
-            file.add_table()
-        file.new_row(0)
+        file.new_row(0, pat_no)
     return send_file(os.path.join(os.getcwd(), fname), as_attachment=True)
 
 

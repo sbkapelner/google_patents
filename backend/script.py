@@ -15,8 +15,9 @@ class requestFunctions:
             "Connection": "keep-alive",
         }
         response = requests.get(result_link, headers=my_headers)
+        status_code = response.status_code
 
-        return response
+        return response, status_code
 
     def get_other(self, response: object) -> str:
         soup = BeautifulSoup(response.text, "html.parser")
@@ -43,7 +44,7 @@ class requestFunctions:
             f"{priority_date}\n",
         )
 
-    def get_status(self, response: object):
+    def get_status(self, response: object) -> str:
         soup = BeautifulSoup(response.text, "html.parser")
         status_tag = soup.find_all("span", itemprop="status")
         exp_tag = soup.find_all("time", itemprop="expiration")
@@ -90,7 +91,6 @@ class updateDocument(requestFunctions):
     def __init__(
         self,
         docxfilename: str,
-        pat_no: str,
         parameters={
             "patent_no": "on",
             "title": "on",
@@ -101,20 +101,16 @@ class updateDocument(requestFunctions):
         },
     ):
         self.docxfilename = docxfilename
-        self.pat_no = pat_no
-        self.result_link = self.url_from_patno(self.pat_no)
         self.parameters = parameters
-        self.status_code = requests.get(self.result_link).status_code
-        self.response = self.get_html(self.result_link)
 
-    def get_google_data(self):
+    def get_google_data(self, response):
         google_data = {
-            "patent_no": self.get_other(self.response)[0],
-            "title": self.get_other(self.response)[1],
-            "inventor": self.get_other(self.response)[2],
-            "assignee": self.get_other(self.response)[3],
-            "status": self.get_status(self.response),
-            "priority_date": self.get_other(self.response)[4],
+            "patent_no": self.get_other(response)[0],
+            "title": self.get_other(response)[1],
+            "inventor": self.get_other(response)[2],
+            "assignee": self.get_other(response)[3],
+            "status": self.get_status(response),
+            "priority_date": self.get_other(response)[4],
         }
         return google_data
 
@@ -129,7 +125,10 @@ class updateDocument(requestFunctions):
         table.style = "Table Grid"
         document.save(self.docxfilename)
 
-    def new_row(self, table_no: int):
+    def new_row(self, table_no: int, pat_no: str):
+        result_link = self.url_from_patno(pat_no)
+        response, status_code = self.get_html(result_link)
+
         document = Document(self.docxfilename)
         table = document.tables[table_no]
         table.add_row()
@@ -138,16 +137,16 @@ class updateDocument(requestFunctions):
         p.paragraph_format.space_after = Inches(0.3)
         filtered_keys = [k for (k, v) in self.parameters.items() if v != "off"]
 
-        if self.status_code == 200:
+        if status_code == 200:
             for key in filtered_keys:
                 if key == "patent_no":
                     add_hyperlink(
-                        p, self.get_google_data()["patent_no"], self.result_link
+                        p, self.get_google_data(response)["patent_no"], result_link
                     )
                 else:
-                    p.add_run(self.get_google_data()[key])
+                    p.add_run(self.get_google_data(response)[key])
 
         else:
-            p.add_run(f"Could not find {self.pat_no}")
+            p.add_run(f"Could not find {pat_no}")
 
         document.save(self.docxfilename)
