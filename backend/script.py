@@ -14,7 +14,7 @@ class requestFunctions:
             "Accept": "*/*",
             "Connection": "keep-alive",
         }
-        response = requests.get(result_link, headers=my_headers)
+        response = requests.get(result_link, headers=my_headers, timeout=None)
         status_code = response.status_code
 
         return response, status_code
@@ -64,10 +64,10 @@ class requestFunctions:
             exp = exp_tag[0].text
 
         match status:
-            case "Expired":
-                return f"{status}\n"
             case "Active":
                 return f"{status} (Exp. {exp})\n"
+            case "Expired":
+                return f"{status}\n"
             case 0:
                 return "No status or exp date"
             case "Abandoned":
