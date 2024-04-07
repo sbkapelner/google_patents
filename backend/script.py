@@ -125,6 +125,20 @@ class updateDocument(requestFunctions):
         table.style = "Table Grid"
         document.save(self.docxfilename)
 
+    def json_only(self, pat_no: str):
+        entries = []
+        result_link = self.url_from_patno(pat_no)
+        print(result_link)
+        response, status_code = self.get_html(result_link)
+        print(response, status_code)
+        filtered_keys = [k for (k, v) in self.parameters.items() if v != "off"]
+        if status_code == 200:
+            for key in filtered_keys:
+                entries.append(self.get_google_data(response)[key])
+        else:
+            entries.append(f"Could not find {pat_no}")
+        return entries
+
     def new_row(self, table_no: int, pat_no: str):
         result_link = self.url_from_patno(pat_no)
         response, status_code = self.get_html(result_link)

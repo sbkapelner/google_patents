@@ -10,6 +10,7 @@ app = Flask(__name__)
 def submit():
     err_nodata = request.form["err_nodata"]
     err_datashape = request.form["err_datashape"]
+    json_only = request.form["json_only"]
 
     client_parameters = {
         "patent_no": request.form["patent_no"],
@@ -26,11 +27,22 @@ def submit():
     data = request.form["generate"].split("\r\n")
     fname = f"{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.docx"
     file = updateDocument(fname, client_parameters)
-    file.create_document()
-    file.add_table()
 
-    for pat_no in data:
-        file.new_row(0, pat_no)
+    if json_only == "on":
+        fname = f"{datetime.now().strftime('%Y-%m-%d_%H:%M:%S')}.txt"
+        for pat_no in data:
+            entry = file.json_only(pat_no)
+            with open(fname, "a") as txtfile:
+                for item in entry:
+                    txtfile.write(item + "\n")
+
+    else:
+        file.create_document()
+        file.add_table()
+
+        for pat_no in data:
+            file.new_row(0, pat_no)
+
     return send_file(os.path.join(os.getcwd(), fname), as_attachment=True)
 
 

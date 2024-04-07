@@ -27,6 +27,10 @@ function RadioButtons() {
       <input type="checkbox" name="priority_date" value="on"></input>
       <input type="hidden" name="priority_date" value="off" />
       <label>Priority Date </label>
+
+      <input type="checkbox" name="json_only" value="on"></input>
+      <input type="hidden" name="json_only" value="off" />
+      <label>JSON Only </label>
     </div>
   );
 }
